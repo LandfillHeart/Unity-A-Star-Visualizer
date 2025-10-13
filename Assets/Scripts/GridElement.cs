@@ -1,0 +1,21 @@
+using System;
+
+namespace Interview.Pathfinding
+{
+	public class GridElement
+	{
+		public Coordinates coords { get; private set; }
+		public bool IsBlocked { get; private set; }
+
+		public GridElement(int x, int y)
+		{
+			coords = new Coordinates(x, y);
+		}
+
+		public void ToggleBlock(bool state)
+		{
+			IsBlocked = state;
+		}
+
+	}
+}
