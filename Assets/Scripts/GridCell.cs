@@ -2,12 +2,12 @@ using System;
 
 namespace Interview.Pathfinding
 {
-	public class GridElement
+	public class GridCell
 	{
 		public Coordinates coords { get; private set; }
 		public bool IsBlocked { get; private set; }
 
-		public GridElement(int x, int y)
+		public GridCell(int x, int y)
 		{
 			coords = new Coordinates(x, y);
 		}

@@ -44,5 +44,11 @@ namespace Interview.Pathfinding
 		{
 			return HashCode.Combine(x, y);
 		}
+
+		public override bool Equals(object obj)
+		{
+			if(!(obj is Coordinates)) return false;
+			return this == (Coordinates)obj;
+		}
 	}
 }

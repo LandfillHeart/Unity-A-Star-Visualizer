@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +18,19 @@ namespace Interview.Pathfinding
 
 		private Vector3 startingPos = Vector3.zero;
 
-		private GridElement[,] grid;
+		[NonSerialized] private GridCell[,] grid;
 
 		// Unity Methods
 		private void Awake()
 		{
 			instance = this;
 			InitializeGrid();
+			
 		}
 
 		private void Start()
 		{
+			/*
 			Queue<Coordinates> path = GetPath(new Coordinates(1, 0), new Coordinates(2, 3));
 			if (path.Count == 0) Debug.Log("We fucked up");
 			while(path.Count > 0)
@@ -35,16 +38,12 @@ namespace Interview.Pathfinding
 				Coordinates coords = path.Dequeue();
 				Debug.Log(coords.ToString());
 			}
-		}
-
-		private void FixedUpdate()
-		{
-
+			*/
 		}
 
 		// Pathfinding
 		// TO-DO: this should return bool and out Path
-		private Queue<Coordinates> GetPath(Coordinates start, Coordinates goal)
+		public Queue<Coordinates> GetPath(Coordinates start, Coordinates goal)
 		{
 			
 			// priority queue isn't supported by default so going with an hashset for now
@@ -73,7 +72,6 @@ namespace Interview.Pathfinding
 				foreach (Coordinates node in openSet)
 				{
 					float h = Heuristic(node);
-					Debug.Log($"Heuristic node open set {h}");
 					if (Heuristic(node) < lowestH)
 					{
 						current = node;
@@ -144,13 +142,13 @@ namespace Interview.Pathfinding
 		{
 			// 0, 0 = bottom left corner
 			// N, N = top right
-			grid = new GridElement[mapSizeX, mapSizeY];
+			grid = new GridCell[mapSizeX, mapSizeY];
 
 			for(int i = 0;  i < mapSizeX; i++)
 			{
 				for(int j = 0; j < mapSizeY; j++)
 				{
-					grid[i, j] = new GridElement(i, j);
+					grid[i, j] = new GridCell(i, j);
 				}
 			}
 		}
@@ -159,13 +157,13 @@ namespace Interview.Pathfinding
 		{
 			// 0, 0 = bottom left corner
 			// N, N = top right
-			grid = new GridElement[mapSizeX, mapSizeY];
+			grid = new GridCell[mapSizeX, mapSizeY];
 
 			for (int i = 0; i < mapSizeX; i++)
 			{
 				for (int j = 0; j < mapSizeY; j++)
 				{
-					grid[i, j] = new GridElement(i, j);
+					grid[i, j] = new GridCell(i, j);
 				}
 			}
 		}
@@ -181,6 +179,22 @@ namespace Interview.Pathfinding
 			}
 		}
 
+		public void ToggleCellBlocked(Coordinates coords)
+		{
+
+			grid[coords.x, coords.y].ToggleBlock(!grid[coords.x, coords.y].IsBlocked);
+		}
+
+		public void ToggleCellBlocked(Coordinates coords, bool state)
+		{
+			grid[coords.x, coords.y].ToggleBlock(state);
+		}
+
+		public bool IsCellBlocked(Coordinates coords)
+		{
+			return grid[coords.x, coords.y].IsBlocked;
+		}
+
 		// take a virtual point (shifted world point) and transform it into a virtual grid coordinate
 		private Coordinates PointToGrid(Vector2 worldPoint)
 		{
@@ -191,7 +205,7 @@ namespace Interview.Pathfinding
 			return new Coordinates(x, y);
 		}
 
-		private Vector2 GridToPoint(Coordinates coords)
+		public Vector2 GridToWorld(Coordinates coords)
 		{
 			// subtract cellSize/2 to receive the center of the cell and not the corner
 			float x = coords.x * cellSize - cellSize/2;
