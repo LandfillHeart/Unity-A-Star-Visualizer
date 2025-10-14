@@ -109,14 +109,25 @@ namespace Interview.Pathfinding
 						if (grid[current.x + i, current.y + j].IsBlocked) continue;
 
 						// tentative gScore is the distance from start to the neighbor through current
-						float tentative_gScore = gScore[current.x, current.y];  
-						if(tentative_gScore < gScore[current.x + i, current.y + j])
+						float tentative_gScore = gScore[current.x, current.y];
+						// edge(n) - makes sure pathfinder doesnt return a diagonal when a straight line would be faster
+						// if i or j is 0 then the neighbor is not diagonal, and cellSize is the distance from center of cell to center of cell
+						// otherwise, the neighbor is diagonal, so sqrt of side^2 + side^2
+						if(Mathf.Abs(i + j) != 1)
+						{
+							tentative_gScore += Mathf.Sqrt(Mathf.Pow(cellSize, 2) * 2);
+						} else
+						{
+							tentative_gScore += cellSize;
+						}
+
+						if (tentative_gScore < gScore[current.x + i, current.y + j])
 						{
 							// this path to neighbor is better than any previous one
 							cameFrom[grid[current.x + i, current.y + j].coords] = current;
 							gScore[current.x + i, current.y + j] = tentative_gScore;
 							fScore[current.x + i, current.y + j] = tentative_gScore + Heuristic(grid[current.x + i, current.y + j].coords);
-							if(!openSet.Contains(grid[current.x + i, current.y + j].coords))
+							if (!openSet.Contains(grid[current.x + i, current.y + j].coords))
 							{
 								openSet.Add(grid[current.x + i, current.y + j].coords);
 							}
